@@ -4,8 +4,11 @@ import 'package:maplibre_gl/maplibre_gl.dart';
 import 'page.dart';
 
 class FullMapPage extends ExamplePage {
-  const FullMapPage({super.key})
-      : super(const Icon(Icons.map), 'Full screen map');
+  // Put this somewhere in your app code that's accessible
+  static const styleUrl = "https://tiles.stadiamaps.com/styles/alidade_smooth_dark.json";
+  static const apiKey = "YOUR-API-KEY";
+
+  const FullMapPage({super.key}) : super(const Icon(Icons.map), 'Full screen map');
 
   @override
   Widget build(BuildContext context) {
@@ -41,21 +44,23 @@ class FullMapState extends State<FullMap> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        // TODO: commented out when cherry-picking https://github.com/flutter-mapbox-gl/maps/pull/775
-        // needs different dark and light styles in this repo
-        // floatingActionButton: Padding(
-        // padding: const EdgeInsets.all(32.0),
-        // child: FloatingActionButton(
-        // child: Icon(Icons.swap_horiz),
-        // onPressed: () => setState(
-        // () => isLight = !isLight,
-        // ),
-        // ),
-        // ),
-        body: MapLibreMap(
-      onMapCreated: _onMapCreated,
-      initialCameraPosition: const CameraPosition(target: LatLng(0.0, 0.0)),
-      onStyleLoadedCallback: _onStyleLoadedCallback,
-    ));
+      // TODO: commented out when cherry-picking https://github.com/flutter-mapbox-gl/maps/pull/775
+      // needs different dark and light styles in this repo
+      // floatingActionButton: Padding(
+      // padding: const EdgeInsets.all(32.0),
+      // child: FloatingActionButton(
+      // child: Icon(Icons.swap_horiz),
+      // onPressed: () => setState(
+      // () => isLight = !isLight,
+      // ),
+      // ),
+      // ),
+      body: MapLibreMap(
+        styleString: "https://api.maptiler.com/maps/openstreetmap/style.json?key=UQEUsQPjVHiY8ZJp0M9A",
+        onMapCreated: _onMapCreated,
+        initialCameraPosition: const CameraPosition(target: LatLng(0.0, 0.0)),
+        onStyleLoadedCallback: _onStyleLoadedCallback,
+      ),
+    );
   }
 }

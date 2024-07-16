@@ -10,6 +10,9 @@ import 'package:flutter/material.dart';
 import 'package:location/location.dart';
 import 'package:maplibre_gl/maplibre_gl.dart';
 import 'package:maplibre_gl_example/attribution.dart';
+import 'package:maplibre_gl_example/cartografia.dart';
+import 'package:maplibre_gl_example/composite_map.dart';
+import 'package:maplibre_gl_example/edit_line.dart';
 import 'package:maplibre_gl_example/get_map_informations.dart';
 import 'package:maplibre_gl_example/given_bounds.dart';
 import 'package:maplibre_gl_example/localized_map.dart';
@@ -38,12 +41,15 @@ import 'sources.dart';
 final List<ExamplePage> _allPages = <ExamplePage>[
   const MapUiPage(),
   const FullMapPage(),
+  const CompositeMap(),
   const LocalizedMapPage(),
   const AnimateCameraPage(),
   const MoveCameraPage(),
+  const CartografiaPage(),
   const PlaceSymbolPage(),
   const PlaceSourcePage(),
   const LinePage(),
+  const EditLinePage(),
   const LocalStylePage(),
   const LayerPage(),
   const PlaceCirclePage(),

@@ -11,8 +11,7 @@ import 'page.dart';
 const randomMarkerNum = 100;
 
 class CustomMarkerPage extends ExamplePage {
-  const CustomMarkerPage({super.key})
-      : super(const Icon(Icons.place), 'Custom marker');
+  const CustomMarkerPage({super.key}) : super(const Icon(Icons.place), 'Custom marker');
 
   @override
   Widget build(BuildContext context) {
@@ -51,9 +50,9 @@ class CustomMarkerState extends State<CustomMarker> {
     debugPrint('onStyleLoadedCallback');
   }
 
-  void _onMapLongClickCallback(Point<double> point, LatLng coordinates) {
-    _addMarker(point, coordinates);
-  }
+  // void _onMapLongClickCallback(Point<double> point, LatLng coordinates) {
+  //   _addMarker(point, coordinates);
+  // }
 
   void _onCameraIdleCallback() {
     _updateMarkerPosition();
@@ -93,15 +92,14 @@ class CustomMarkerState extends State<CustomMarker> {
         MapLibreMap(
           trackCameraPosition: true,
           onMapCreated: _onMapCreated,
-          onMapLongClick: _onMapLongClickCallback,
+          // onMapLongClick: _onMapLongClickCallback,
           onCameraIdle: _onCameraIdleCallback,
           onStyleLoadedCallback: _onStyleLoadedCallback,
-          initialCameraPosition:
-              const CameraPosition(target: LatLng(35.0, 135.0), zoom: 5),
+          initialCameraPosition: const CameraPosition(target: LatLng(35.0, 135.0), zoom: 5),
           iosLongClickDuration: const Duration(milliseconds: 200),
         ),
         IgnorePointer(
-            ignoring: true,
+            ignoring: false,
             child: Stack(
               children: _markers,
             ))
@@ -120,8 +118,7 @@ class CustomMarkerState extends State<CustomMarker> {
 
           _mapController.toScreenLocationBatch(param).then((value) {
             for (var i = 0; i < randomMarkerNum; i++) {
-              final point =
-                  Point<double>(value[i].x as double, value[i].y as double);
+              final point = Point<double>(value[i].x as double, value[i].y as double);
               _addMarker(point, param[i]);
             }
           });
@@ -151,8 +148,7 @@ class CustomMarkerState extends State<CustomMarker> {
         sw.start();
         final list = <Future<Point<num>>>[];
         for (var j = 0; j < batch; j++) {
-          final p = _mapController
-              .toScreenLocation(LatLng(j.toDouble() % 80, j.toDouble() % 300));
+          final p = _mapController.toScreenLocation(LatLng(j.toDouble() % 80, j.toDouble() % 300));
           list.add(p);
         }
         Future.wait(list);
@@ -206,8 +202,8 @@ class MarkerState extends State<Marker> with TickerProviderStateMixin {
 
   late Point _position;
 
-  late AnimationController _controller;
-  late Animation<double> _animation;
+  // late AnimationController _controller;
+  // late Animation<double> _animation;
 
   MarkerState();
 
@@ -217,21 +213,21 @@ class MarkerState extends State<Marker> with TickerProviderStateMixin {
     _position = widget.initialPosition;
     widget.addMarkerState(this);
 
-    _controller = AnimationController(
-      duration: const Duration(seconds: 2),
-      vsync: this,
-    )..repeat(reverse: true);
-    _animation = CurvedAnimation(
-      parent: _controller,
-      curve: Curves.elasticOut,
-    );
+    // _controller = AnimationController(
+    //   duration: const Duration(seconds: 2),
+    //   vsync: this,
+    // )..repeat(reverse: true);
+    // _animation = CurvedAnimation(
+    //   parent: _controller,
+    //   curve: Curves.elasticOut,
+    // );
   }
 
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   _controller.dispose();
+  //   super.dispose();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -244,12 +240,22 @@ class MarkerState extends State<Marker> with TickerProviderStateMixin {
     }
 
     return Positioned(
-        left: _position.x / ratio - _iconSize / 2,
-        top: _position.y / ratio - _iconSize / 2,
-        child: RotationTransition(
-            turns: _animation,
-            child: Image.asset('assets/symbols/2.0x/custom-icon.png',
-                height: _iconSize)));
+      width: _iconSize,
+      height: _iconSize,
+      left: _position.x / ratio - _iconSize / 2,
+      top: _position.y / ratio - _iconSize / 2,
+      child: GestureDetector(
+        key: widget.key,
+        onTap: () {
+          debugPrint('onTap');
+        },
+        onLongPressMoveUpdate: (details) {
+          debugPrint('onLongPressMoveUpdate ${details.localPosition}');
+          updatePosition(Point(details.localPosition.dx, details.localPosition.dy));
+        },
+        child: Image.asset('assets/symbols/2.0x/custom-icon.png', height: _iconSize),
+      ),
+    );
   }
 
   void updatePosition(Point<num> point) {

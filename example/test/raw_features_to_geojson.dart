@@ -2,25 +2,32 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/services.dart';
+import 'package:flutter_test/flutter_test.dart';
 import 'package:path_provider/path_provider.dart';
 
 void main() async {
-  // Leggi il file dagli assets (assicurati che il file sia nella directory assets)
-  final jsonString = await rootBundle.loadString("assets/features.json");
+  const path = "assets/result.json";
 
-  // Decodifica il JSON
-  final Map<String, dynamic> input = jsonDecode(jsonString);
+  TestWidgetsFlutterBinding.ensureInitialized();
 
-  // Converti in GeoJSON
-  final geoJson = _toGeoJSON(input);
+  test('Converti in GeoJSON', () async {
+    // Leggi il file dagli assets
+    final jsonString = await rootBundle.loadString(path);
 
-  // Converti l'oggetto GeoJSON in stringa
-  final geoJsonString = jsonEncode(geoJson);
+    // Decodifica il JSON
+    final Map<String, dynamic> input = jsonDecode(jsonString);
 
-  // Salva il risultato in un nuovo file JSON
-  await _saveToFile('output.json', geoJsonString);
+    // Converti in GeoJSON
+    final geoJson = _toGeoJSON(input);
 
-  print('File salvato con successo!');
+    // Converti l'oggetto GeoJSON in stringa
+    final geoJsonString = jsonEncode(geoJson);
+
+    // Salva il risultato in un nuovo file JSON
+    await _saveToFile('output.json', geoJsonString);
+
+    print('File salvato con successo!');
+  });
 }
 
 // Funzione per convertire in GeoJSON LineString
@@ -29,7 +36,7 @@ Map<String, dynamic> _toGeoJSON(Map<String, dynamic> data) {
     final coordinates = <List<double>>[];
     if (entry.value is List<dynamic> && (entry.value as List<dynamic>).length >= 2) {
       for (final pos in entry.value) {
-        coordinates.add([pos[1], pos[0]]);
+        coordinates.add([pos[0], pos[1]]);
       }
     }
 
