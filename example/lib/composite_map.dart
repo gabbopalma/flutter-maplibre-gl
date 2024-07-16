@@ -28,18 +28,16 @@ class CompositeMapBodyState extends State<CompositeMapBody> {
 
   @override
   Widget build(BuildContext context) {
-    final mediaQuery = MediaQuery.of(context);
-
     return Stack(
       children: [
         gm.GoogleMap(
           onMapCreated: _onGoogleMapCreated,
-          initialCameraPosition: gm.CameraPosition(target: gm.LatLng(center.latitude, center.longitude), zoom: 13.0),
+          initialCameraPosition: gm.CameraPosition(target: gm.LatLng(center.latitude, center.longitude), zoom: 9.0),
         ),
         Opacity(
-          opacity: 0.5,
+          opacity: 1,
           child: MapLibreMap(
-            // styleString: "https://api.maptiler.com/maps/topo-v2/tiles.json?key=vtLC2eJ5637uotCVnHyu",
+            styleString: "assets/transparent_style.json",
             trackCameraPosition: true,
             onMapCreated: _onMapLibreMapCreated,
             onStyleLoadedCallback: _onMapLibreStyleLoaded,
@@ -79,16 +77,18 @@ class CompositeMapBodyState extends State<CompositeMapBody> {
   }
 
   void _onMapLibreStyleLoaded() {
-    mapController?.addSource(
-      "raster-test",
-      const RasterSourceProperties(
-        tiles: ["https://api.maptiler.com/maps/topo-v2/{z}/{x}/{y}.png?key=vtLC2eJ5637uotCVnHyu"],
-        tileSize: 512,
-        attribution:
-            '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>',
-      ),
-    );
-    mapController?.addRasterLayer("raster-test", "raster-test", const RasterLayerProperties());
+    // mapController?.addSource(
+    //   "raster-test",
+    //   const RasterSourceProperties(
+    //     tiles: [
+    //       "https://api.maptiler.com/maps/topo-v2/{z}/{x}/{y}.png?key=vtLC2eJ5637uotCVnHyu",
+    //     ],
+    //     tileSize: 512,
+    //     attribution:
+    //         '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>',
+    //   ),
+    // );
+    // mapController?.addRasterLayer("raster-test", "raster-test", const RasterLayerProperties());
 
     final pesaroArea = Fill(
         "pesaro-area",

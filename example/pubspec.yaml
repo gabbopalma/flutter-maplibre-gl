@@ -40,3 +40,4 @@ flutter:
     - assets/sydney1.png
     - assets/features.json
     - assets/result.json
+    - assets/transparent_style.json

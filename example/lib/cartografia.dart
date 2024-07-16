@@ -30,6 +30,7 @@ class CartografiaBodyState extends State<CartografiaBody> {
   MapLibreMapController? controller;
 
   int linesCount = 0;
+  bool layerVisibility = true;
 
   @override
   void dispose() {
@@ -44,86 +45,100 @@ class CartografiaBodyState extends State<CartografiaBody> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Expanded(
-          child: MapLibreMap(
-            onMapCreated: _onMapCreated,
-            onStyleLoadedCallback: () async {
-              controller?.addSource(
-                "raster-test",
-                const RasterSourceProperties(
-                  tiles: ["https://api.maptiler.com/maps/topo-v2/{z}/{x}/{y}.png?key=vtLC2eJ5637uotCVnHyu"],
-                  tileSize: 512,
-                  attribution:
-                      '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>',
-                ),
-              );
-              controller?.addRasterLayer("raster-test", "raster-test", const RasterLayerProperties());
+    return Scaffold(
+        body: Column(
+          children: [
+            Expanded(
+              child: MapLibreMap(
+                styleString: "assets/transparent_style.json",
+                onMapCreated: _onMapCreated,
+                onStyleLoadedCallback: () async {
+                  controller?.addSource(
+                    "raster-test",
+                    const RasterSourceProperties(
+                      tiles: [
+                        "https://api.maptiler.com/maps/topo-v2/{z}/{x}/{y}.png?key=vtLC2eJ5637uotCVnHyu",
+                      ],
+                      tileSize: 512,
+                      attribution:
+                          '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>',
+                    ),
+                  );
+                  controller?.addRasterLayer("raster-test", "raster-test", const RasterLayerProperties());
 
-              final featuresString = await DefaultAssetBundle.of(context).loadString("assets/features.json");
-              final Map<String, dynamic> featuresRaw = jsonDecode(featuresString);
+                  final featuresString = await DefaultAssetBundle.of(context).loadString("assets/features.json");
+                  final Map<String, dynamic> featuresRaw = jsonDecode(featuresString);
 
-              await controller?.addGeoJsonSource("cartografia-source", featuresRaw);
+                  await controller?.addGeoJsonSource("cartografia-source", featuresRaw);
 
-              await controller?.addLineLayer(
-                "cartografia-source",
-                "cartografia-layer-lines",
-                const LineLayerProperties(
-                  lineColor: "#000000",
-                  lineWidth: 2.0,
-                  lineOpacity: 0.3,
-                ),
-                enableInteraction: true,
-              );
+                  await controller?.addLineLayer(
+                    "cartografia-source",
+                    "cartografia-layer-lines",
+                    const LineLayerProperties(
+                      lineColor: "#000000",
+                      lineWidth: 2.0,
+                      lineOpacity: 0.3,
+                    ),
+                    enableInteraction: true,
+                  );
 
-              setState(() => linesCount = (featuresRaw["features"] as List).length);
+                  setState(() => linesCount = (featuresRaw["features"] as List).length);
 
-              print("Added source and lineLayer (features: $linesCount)");
+                  print("Added source and lineLayer (features: $linesCount)");
 
-              // for (final entry in featuresRaw.entries.toSet().take(4000)) {
-              //   if (entry.value is List<dynamic>) {
-              //     final coordinates = <LatLng>[];
-              //     for (final dynamic coord in entry.value) {
-              //       if (coord is List<dynamic> && coord.length >= 2) {
-              //         coordinates.add(LatLng(coord[1], coord[0]));
-              //       }
-              //     }
+                  // for (final entry in featuresRaw.entries.toSet().take(4000)) {
+                  //   if (entry.value is List<dynamic>) {
+                  //     final coordinates = <LatLng>[];
+                  //     for (final dynamic coord in entry.value) {
+                  //       if (coord is List<dynamic> && coord.length >= 2) {
+                  //         coordinates.add(LatLng(coord[1], coord[0]));
+                  //       }
+                  //     }
 
-              //     if (coordinates.isNotEmpty) {
-              //       // Add a delay to make the lines appear one by one
-              //       await Future.delayed(const Duration(milliseconds: 50));
-              //       _add(coordinates);
-              //       setState(() {});
-              //     }
-              //   }
-              // }
-              // ignore: use_build_context_synchronously
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('$linesCount lines drawn!'),
-                  backgroundColor: Colors.green,
-                ),
-              );
-            },
-            initialCameraPosition: const CameraPosition(target: center, zoom: 13.0),
-            minMaxZoomPreference: const MinMaxZoomPreference(6.0, 23.0),
-            // dragEnabled: false,
-          ),
-        ),
-        Builder(
-          builder: (context) {
-            return Align(
-              alignment: Alignment.bottomCenter,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text('Lines drawn: $linesCount'),
+                  //     if (coordinates.isNotEmpty) {
+                  //       // Add a delay to make the lines appear one by one
+                  //       await Future.delayed(const Duration(milliseconds: 50));
+                  //       _add(coordinates);
+                  //       setState(() {});
+                  //     }
+                  //   }
+                  // }
+                  // ignore: use_build_context_synchronously
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('$linesCount lines drawn!'),
+                      backgroundColor: Colors.green,
+                    ),
+                  );
+                },
+                initialCameraPosition: const CameraPosition(target: center, zoom: 13.0),
+                minMaxZoomPreference: const MinMaxZoomPreference(6.0, 23.0),
+                // dragEnabled: false,
               ),
-            );
-          },
+            ),
+            Builder(
+              builder: (context) {
+                return Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text('Lines drawn: $linesCount'),
+                  ),
+                );
+              },
+            ),
+          ],
         ),
-      ],
-    );
+        floatingActionButton: FloatingActionButton(
+          onPressed: () async {
+            setState(() {
+              layerVisibility = !layerVisibility;
+            });
+            await controller?.setLayerVisibility("cartografia-layer-lines", layerVisibility);
+            debugPrint("Feature updated");
+          },
+          child: Icon(layerVisibility ? Icons.visibility_off : Icons.visibility),
+        ));
   }
 
   Future<void> _onMapCreated(MapLibreMapController controller) async {
