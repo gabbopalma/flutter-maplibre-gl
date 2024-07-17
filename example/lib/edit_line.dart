@@ -64,7 +64,7 @@ class EditLineBodyState extends State<EditLineBody> {
       onMapCreated: _onMapCreated,
       onStyleLoadedCallback: _onStyleLoadedCallback,
       onMapClick: _onMapClick,
-      onMapLongClick: _onMapLongClick,
+      // onMapLongClick: _onMapLongClcick,
       initialCameraPosition: const CameraPosition(target: center, zoom: 16.0),
     );
   }
@@ -113,19 +113,19 @@ class EditLineBodyState extends State<EditLineBody> {
     }
   }
 
-  Future<void> _onMapLongClick(Point<double> point, LatLng coordinates) async {
-    debugPrint("Long click at: $coordinates");
-    // Find the closest segment (so the point) on the line to the click event
-    final lineToEdit = controller?.lineManager?.annotations.firstWhereOrNull((Line line) => line.id.contains("lineToEdit"));
+  // Future<void> _onMapLongClick(Point<double> point, LatLng coordinates) async {
+  //   debugPrint("Long click at: $coordinates");
+  //   // Find the closest segment (so the point) on the line to the click event
+  //   final lineToEdit = controller?.lineManager?.annotations.firstWhereOrNull((Line line) => line.id.contains("lineToEdit"));
 
-    if (lineToEdit != null) {
-      final nearestPoint = nearestSegmentOnLine(coordinates, lineToEdit.options.geometry!)?.first;
-      if (nearestPoint == null) return;
+  //   if (lineToEdit != null) {
+  //     final nearestPoint = nearestSegmentOnLine(coordinates, lineToEdit.options.geometry!)?.first;
+  //     if (nearestPoint == null) return;
 
-      final pointIndex = nearestPoint + 1;
-      await _addVertexToLine(lineToEdit.id, coordinates, pointIndex: pointIndex);
-    }
-  }
+  //     final pointIndex = nearestPoint + 1;
+  //     await _addVertexToLine(lineToEdit.id, coordinates, pointIndex: pointIndex);
+  //   }
+  // }
 
   Future<void> _addVertexToLine(String symbolId, LatLng coords, {int? pointIndex}) async {
     if (pointIndex == -1) return;
