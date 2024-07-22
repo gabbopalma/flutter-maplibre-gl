@@ -30,7 +30,9 @@ migrate_working_dir/
 .flutter-plugins-dependencies
 .pub-cache/
 .pub/
-/cartografia_example/
+/cartografia_example/build/
+/cartografia_example/lib/google/
+cartografia_example/assets/google/
 /example/build/
 /example/lib/google/
 /example/assets/google/
