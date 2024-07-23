@@ -46,6 +46,8 @@ flutter:
     - assets/sydney0.png
     - assets/sydney1.png
     - assets/logo.png
+    - assets/black-logo.png
     - assets/features.json
     - assets/result.json
+    - assets/big_result.json
     - assets/transparent_style.json

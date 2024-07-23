@@ -5,9 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:maplibre_gl/maplibre_gl.dart';
 import 'package:maplibre_gl_example/page.dart';
-import 'package:maplibre_gl_example/util.dart';
-import 'package:turf/helpers.dart' as turf;
-import 'package:turf/src/nearest_point_on_line.dart' as turfLine show nearestPointOnLine;
 
 class EditLinePage extends ExamplePage {
   const EditLinePage({super.key}) : super(const Icon(Icons.gesture_outlined), 'Edit Line');

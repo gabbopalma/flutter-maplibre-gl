@@ -72,13 +72,14 @@ class CustomMarkerState extends State<CustomMarker> {
     });
   }
 
-  void _addMarker(Point<double> point, LatLng coordinates) {
+  void _addMarker(Point<double> point, LatLng coordinates, Widget child) {
     setState(() {
       _markers.add(
         Marker(
           _rnd.nextInt(100000).toString(),
           coordinates,
-          point,
+          child,
+          // point,
           _addMarkerStates,
         ),
       );
@@ -119,7 +120,7 @@ class CustomMarkerState extends State<CustomMarker> {
           _mapController.toScreenLocationBatch(param).then((value) {
             for (var i = 0; i < randomMarkerNum; i++) {
               final point = Point<double>(value[i].x as double, value[i].y as double);
-              _addMarker(point, param[i]);
+              _addMarker(point, param[i], const Icon(Icons.place));
             }
           });
         },
@@ -180,14 +181,15 @@ class CustomMarkerState extends State<CustomMarker> {
 }
 
 class Marker extends StatefulWidget {
-  final Point initialPosition;
-  final LatLng _coordinate;
+  // final Point initialPosition;
+  final LatLng coordinate;
+  final Widget child;
   final void Function(MarkerState) addMarkerState;
 
   Marker(
     String key,
-    this._coordinate,
-    this.initialPosition,
+    this.coordinate,
+    this.child,
     this.addMarkerState,
   ) : super(key: Key(key));
 
@@ -199,35 +201,17 @@ class Marker extends StatefulWidget {
 
 class MarkerState extends State<Marker> with TickerProviderStateMixin {
   final _iconSize = 20.0;
-
   late Point _position;
-
-  // late AnimationController _controller;
-  // late Animation<double> _animation;
 
   MarkerState();
 
   @override
   void initState() {
     super.initState();
-    _position = widget.initialPosition;
+    // Get Point from Coordinates
+    _position = coordinateToPoint(widget.coordinate);
     widget.addMarkerState(this);
-
-    // _controller = AnimationController(
-    //   duration: const Duration(seconds: 2),
-    //   vsync: this,
-    // )..repeat(reverse: true);
-    // _animation = CurvedAnimation(
-    //   parent: _controller,
-    //   curve: Curves.elasticOut,
-    // );
   }
-
-  // @override
-  // void dispose() {
-  //   _controller.dispose();
-  //   super.dispose();
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -253,7 +237,7 @@ class MarkerState extends State<Marker> with TickerProviderStateMixin {
           debugPrint('onLongPressMoveUpdate ${details.localPosition}');
           updatePosition(Point(details.localPosition.dx, details.localPosition.dy));
         },
-        child: Image.asset('assets/symbols/2.0x/custom-icon.png', height: _iconSize),
+        child: widget.child,
       ),
     );
   }
@@ -265,6 +249,10 @@ class MarkerState extends State<Marker> with TickerProviderStateMixin {
   }
 
   LatLng getCoordinate() {
-    return widget._coordinate;
+    return widget.coordinate;
+  }
+
+  Point coordinateToPoint(LatLng coordinate) {
+    return Point(coordinate.longitude, coordinate.latitude);
   }
 }
