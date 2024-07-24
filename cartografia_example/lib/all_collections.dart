@@ -60,6 +60,14 @@ class AllCollectionsBodyState extends State<AllCollectionsBody> {
             icon: const Icon(Icons.filter_list_rounded),
             itemBuilder: (BuildContext context) {
               return [
+                const PopupMenuItem(
+                  enabled: false,
+                  child: Text(
+                    "Collections visibility",
+                    style: TextStyle(fontWeight: FontWeight.w500, color: Colors.black),
+                  ),
+                ),
+                const PopupMenuDivider(),
                 ...collLayerVisibility.entries.map((e) {
                   return CheckedPopupMenuItem<String>(
                     value: e.key,
@@ -109,7 +117,7 @@ class AllCollectionsBodyState extends State<AllCollectionsBody> {
             alignment: Alignment.bottomCenter,
             child: Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Text('Features disegnate: ${!layerVisibility ? 0 : linesCount}'),
+              child: Text('Drawn features: ${!layerVisibility ? 0 : linesCount}'),
             ),
           ),
         ],

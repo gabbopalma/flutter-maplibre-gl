@@ -49,7 +49,7 @@ class CartografiaBodyState extends State<CartografiaBody> {
                 styleString: "assets/transparent_style.json",
                 onMapCreated: _onMapCreated,
                 onStyleLoadedCallback: () async {
-                  controller?.addSource(  
+                  controller?.addSource(
                     "raster-test",
                     const RasterSourceProperties(
                       tiles: [
@@ -91,7 +91,7 @@ class CartografiaBodyState extends State<CartografiaBody> {
               alignment: Alignment.bottomCenter,
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Text('Linee disegnate: ${!layerVisibility ? 0 : linesCount}'),
+                child: Text('Features drawn: ${!layerVisibility ? 0 : linesCount}'),
               ),
             ),
           ],

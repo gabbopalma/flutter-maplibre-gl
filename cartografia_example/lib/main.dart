@@ -14,15 +14,15 @@ import 'package:location/location.dart';
 import 'package:maplibre_gl/maplibre_gl.dart';
 import 'package:maplibre_gl_example/all_collections.dart';
 import 'package:maplibre_gl_example/cartografia.dart';
-// import 'package:maplibre_gl_example/edit_line.dart';
+import 'package:maplibre_gl_example/edit_line.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'page.dart';
 
 final List<ExamplePage> _allPages = <ExamplePage>[
+  const EditLinePage(),
   const CartografiaPage(),
   const AllCollectionsPage(),
-  // const EditLinePage(),
 ];
 
 class MapsDemo extends StatefulWidget {
@@ -75,7 +75,7 @@ class _MapsDemoState extends State<MapsDemo> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Smartfield Demo con MapLibre')),
+      appBar: AppBar(title: const Text('Smartfield Demo with MapLibre')),
       body: Column(
         children: [
           Expanded(
@@ -139,18 +139,14 @@ Future<void> createFeaturesFolders() async {
 
     List<dynamic> editedCoords;
     if (isSinglePoint) {
-      // Gestisce un singolo punto
       editedCoords = [double.parse(coordinates[0].toStringAsFixed(6)), double.parse(coordinates[1].toStringAsFixed(6))];
     } else if (isListOfPoints) {
-      // Gestisce una lista di punti
       editedCoords = coordinates.map((coord) => [double.parse(coord[0].toStringAsFixed(6)), double.parse(coord[1].toStringAsFixed(6))]).toList();
     } else if (isPolygon) {
-      // Gestisce un poligono
       editedCoords = coordinates.map((ring) => ring.map((coord) => [double.parse(coord[0].toStringAsFixed(6)), double.parse(coord[1].toStringAsFixed(6))]).toList()).toList();
     } else {
-      // Se le coordinate non corrispondono a nessuno dei formati attesi, logga un errore
       log("Formato delle coordinate non supportato per $urn: $coordinates");
-      return; // Salta questa iterazione
+      return;
     }
 
     final collectionName = collectionNameFromUrn(urn);

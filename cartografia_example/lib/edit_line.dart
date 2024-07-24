@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:maplibre_gl/maplibre_gl.dart';
 import 'package:maplibre_gl_example/page.dart';
 
@@ -57,12 +58,24 @@ class EditLineBodyState extends State<EditLineBody> {
 
   @override
   Widget build(BuildContext context) {
-    return MapLibreMap(
-      onMapCreated: _onMapCreated,
-      onStyleLoadedCallback: _onStyleLoadedCallback,
-      onMapClick: _onMapClick,
-      // onMapLongClick: _onMapLongClcick,
-      initialCameraPosition: const CameraPosition(target: center, zoom: 16.0),
+    return Stack(
+      children: [
+        MapLibreMap(
+          onMapCreated: _onMapCreated,
+          onStyleLoadedCallback: _onStyleLoadedCallback,
+          onMapClick: _onMapClick,
+          initialCameraPosition: const CameraPosition(target: center, zoom: 16.0),
+        ),
+        Align(
+          alignment: Alignment.bottomCenter,
+          child: Container(
+            color: Colors.white,
+            width: double.infinity,
+            padding: const EdgeInsets.all(8.0),
+            child: const Text("This is still a work in progress.\n Click on the map to add a new vertex.", textAlign: TextAlign.center),
+          ),
+        ),
+      ],
     );
   }
 
@@ -81,24 +94,39 @@ class EditLineBodyState extends State<EditLineBody> {
       ),
     );
 
-    controller?.lineManager?.add(lineToEdit);
-
+    lineManager?.add(lineToEdit);
     controller?.setSymbolIconAllowOverlap(true);
 
     // Add draggable markers for each polyline vertex.
     for (final point in polylinePoints) {
       final symbol = Symbol(
         "${lineToEdit.id}-${polylinePoints.indexOf(point)}",
-        SymbolOptions(
-          draggable: true,
-          geometry: point,
-          iconSize: 2.0,
-          iconAnchor: "center",
-          iconImage: "assetImage",
-        ),
+        SymbolOptions(draggable: true, geometry: point, iconSize: 1.0, iconAnchor: "center", iconImage: "assetImage"),
       );
       await controller?.symbolManager?.add(symbol);
     }
+
+    await addTiles();
+  }
+
+  Future<void> addTiles() async {
+    await controller?.addSource(
+      "osm-tiles",
+      const RasterSourceProperties(
+        tiles: [
+          "https://api.maptiler.com/maps/topo-v2/{z}/{x}/{y}.png?key=vtLC2eJ5637uotCVnHyu",
+        ],
+        tileSize: 512,
+        attribution:
+            '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>',
+      ),
+    );
+    await controller?.addRasterLayer(
+      "osm-tiles",
+      "osm-tiles",
+      const RasterLayerProperties(),
+      belowLayerId: controller?.lineManager?.id != null ? "${controller?.lineManager?.id}_0" : null,
+    );
   }
 
   Future<void> _onMapClick(Point<double> point, LatLng coordinates) async {
@@ -153,7 +181,7 @@ class EditLineBodyState extends State<EditLineBody> {
       SymbolOptions(
         draggable: true,
         geometry: coords,
-        iconSize: 2.0,
+        iconSize: 1.0,
         iconAnchor: "center",
         iconImage: "assetImage",
       ),
