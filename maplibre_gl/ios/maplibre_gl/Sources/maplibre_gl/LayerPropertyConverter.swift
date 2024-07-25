@@ -355,7 +355,7 @@ class LayerPropertyConverter {
     private class func interpretExpression(propertyName: String, expression: String) -> NSExpression? {
         let isColor = propertyName.contains("color");
         let isOffset = propertyName.contains("offset");
-        let isTranslate = propertyName.contains("translate");
+        let isTranslation = propertyName.contains("translation");
 
         do {
             let json = try JSONSerialization.jsonObject(with: expression.data(using: .utf8)!, options: .fragmentsAllowed)
@@ -366,20 +366,17 @@ class LayerPropertyConverter {
                     return NSExpression(forConstantValue: UIColor(hexString: color))
                 }
             }
-
-            if let offset = json as? [Any]{
-                // checks on the value of property that are literal expressions
-                if offset.count == 2 && offset.first is String && offset.first as? String == "literal" {
-                    if let vector = offset.last as? [Any]{
-                        if(vector.count == 2) {
-                            if isOffset || isTranslate {
-                                // this is required because NSExpression.init(mglJSONObject: json) fails to create
-                                // a proper Expression if the data of a literal is an array destined for a CGVector
+            // this is required because NSExpression.init(mglJSONObject: json) fails to create
+            // a proper Expression if the data of a literal is an array
+            if isOffset || isTranslation {
+                if let offset = json as? [Any]{
+                    if offset.count == 2 && offset.first is String && offset.first as? String == "literal" {
+                        if let vector = offset.last as? [Any]{
+                            if(vector.count == 2) {
                                 if let x = vector.first as? Double, let y = vector.last as? Double {
                                     return NSExpression(forConstantValue: NSValue(cgVector: CGVector(dx: x, dy: y)))
                                 }
                             }
-                            return NSExpression.init(mglJSONObject: json)
                         }
                     }
                 // checks on the value of properties that are arrays

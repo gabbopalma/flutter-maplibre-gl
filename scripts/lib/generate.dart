@@ -81,7 +81,7 @@ Future<void> render(
 
   final pathItems = path.split("/");
   final filename = pathItems.removeLast();
-  final outputPath = '$currentParentPath/${pathItems.join("/")}';
+  final outputPath = "$currentParentPath/${pathItems.join("/")}";
 
   print("Rendering $filename");
   final templateFile =
