@@ -13,7 +13,8 @@ import 'page.dart';
 
 class AllCollectionsPage extends ExamplePage {
   static const String pageTitle = "All Collections (Stress test)";
-  const AllCollectionsPage({super.key}) : super(const Icon(Icons.layers_rounded), pageTitle);
+  const AllCollectionsPage({super.key})
+      : super(const Icon(Icons.layers_rounded), pageTitle);
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +65,8 @@ class AllCollectionsBodyState extends State<AllCollectionsBody> {
                   enabled: false,
                   child: Text(
                     "Collections visibility",
-                    style: TextStyle(fontWeight: FontWeight.w500, color: Colors.black),
+                    style: TextStyle(
+                        fontWeight: FontWeight.w500, color: Colors.black),
                   ),
                 ),
                 const PopupMenuDivider(),
@@ -92,12 +94,14 @@ class AllCollectionsBodyState extends State<AllCollectionsBody> {
               styleString: "assets/transparent_style.json",
               onMapCreated: _onMapCreated,
               onStyleLoadedCallback: () async {
-                addImageFromAsset("assetImage", "assets/symbols/custom-icon.png");
+                addImageFromAsset(
+                    "assetImage", "assets/symbols/custom-icon.png");
                 addImageFromAsset("ebwLogo", "assets/black-logo.png");
                 await addTiles();
                 await addFeaturesCollections(context);
               },
-              initialCameraPosition: const CameraPosition(target: center, zoom: 13.0),
+              initialCameraPosition:
+                  const CameraPosition(target: center, zoom: 13.0),
               minMaxZoomPreference: const MinMaxZoomPreference(6.0, 23.0),
               annotationOrder: const [
                 AnnotationType.symbol,
@@ -117,7 +121,8 @@ class AllCollectionsBodyState extends State<AllCollectionsBody> {
             alignment: Alignment.bottomCenter,
             child: Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Text('Drawn features: ${!layerVisibility ? 0 : linesCount}'),
+              child:
+                  Text('Drawn features: ${!layerVisibility ? 0 : linesCount}'),
             ),
           ),
         ],
@@ -128,7 +133,9 @@ class AllCollectionsBodyState extends State<AllCollectionsBody> {
           var layersIds = await controller?.getLayerIds();
           if (layersIds == null) return;
 
-          layersIds = layersIds.where((element) => element.toString().contains("feat")).toList();
+          layersIds = layersIds
+              .where((element) => element.toString().contains("feat"))
+              .toList();
           for (final layerId in layersIds) {
             await controller?.setLayerVisibility(layerId, layerVisibility);
           }
@@ -155,11 +162,14 @@ class AllCollectionsBodyState extends State<AllCollectionsBody> {
 
     for (final featurePath in featuresPath) {
       // Read the file from the device storage
-      final jsonString = await File("${directory.path}/output_features/$featurePath").readAsString();
+      final jsonString =
+          await File("${directory.path}/output_features/$featurePath")
+              .readAsString();
 
       final Map<String, dynamic> features = jsonDecode(jsonString);
       final collectionName = featurePath.replaceAll(".json", "");
-      final collectionGeomType = features["features"][0]["geometry"]["type"].toString().toLowerCase();
+      final collectionGeomType =
+          features["features"][0]["geometry"]["type"].toString().toLowerCase();
       final layerId = "$collectionName-feat-$collectionGeomType-layer";
 
       await controller?.addGeoJsonSource("$collectionName-source", features);
@@ -180,6 +190,7 @@ class AllCollectionsBodyState extends State<AllCollectionsBody> {
                 23,
                 7.5,
               ],
+              iconOffset: [0, 30],
               iconRotate: 35,
               iconAllowOverlap: true,
               iconRotationAlignment: "map",
@@ -193,10 +204,7 @@ class AllCollectionsBodyState extends State<AllCollectionsBody> {
             LineLayerProperties(
               lineColor: getRandomColor,
               lineWidth: 2.0,
-              lineDasharray: [
-                "literal",
-                getRandomLinePattern,
-              ],
+              lineDasharray: getRandomLinePattern,
             ),
             enableInteraction: true,
           );
@@ -218,7 +226,8 @@ class AllCollectionsBodyState extends State<AllCollectionsBody> {
       // Add the layer visibility to the collLayerVisibility map.
       collLayerVisibility[layerId] = true;
 
-      print("Added $collectionName-source with ${(features["features"] as List).length} features.");
+      print(
+          "Added $collectionName-source with ${(features["features"] as List).length} features.");
     }
   }
 
@@ -271,7 +280,8 @@ class AllCollectionsBodyState extends State<AllCollectionsBody> {
             '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>',
       ),
     );
-    await controller?.addRasterLayer("osm-tiles", "osm-tiles", const RasterLayerProperties());
+    await controller?.addRasterLayer(
+        "osm-tiles", "osm-tiles", const RasterLayerProperties());
   }
 
   Future<void> _onMapCreated(MapLibreMapController controller) async {
@@ -290,12 +300,14 @@ class AllCollectionsBodyState extends State<AllCollectionsBody> {
 
   String get getRandomColor {
     final random = Random();
-    return Color.fromARGB(255, random.nextInt(255), random.nextInt(255), random.nextInt(255)).toHexStringRGB();
+    return Color.fromARGB(
+            255, random.nextInt(255), random.nextInt(255), random.nextInt(255))
+        .toHexStringRGB();
   }
 
-  List<int> get getRandomLinePattern {
+  List<double> get getRandomLinePattern {
     final random = Random();
-    return [random.nextInt(10) + 5, random.nextInt(5)];
+    return [(random.nextInt(10) + 5).toDouble(), random.nextInt(5).toDouble()];
   }
 
   String get getRandomIcon {
@@ -321,7 +333,12 @@ class AllCollectionsBodyState extends State<AllCollectionsBody> {
     _showSnackBar('feature', coords.toString());
   }
 
-  void _onFeatureDrag(dynamic, {required LatLng current, required LatLng delta, required DragEventType eventType, required LatLng origin, required Point<double> point}) {
+  void _onFeatureDrag(dynamic,
+      {required LatLng current,
+      required LatLng delta,
+      required DragEventType eventType,
+      required LatLng origin,
+      required Point<double> point}) {
     _showSnackBar('feature', "$origin to $current");
   }
 }
