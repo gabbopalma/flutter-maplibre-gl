@@ -142,7 +142,7 @@ class LayerState extends State {
   void _onMapCreated(MapLibreMapController controller) {
     this.controller = controller;
 
-    controller.onFeatureTapped.add(onFeatureTap);
+    // controller.onFeatureTapped.add(onFeatureTap);
   }
 
   void onFeatureTap(
