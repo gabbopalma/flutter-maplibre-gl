@@ -8,7 +8,7 @@ typedef OnMapClickCallback = void Function(
     Point<double> point, LatLng coordinates);
 
 typedef OnFeatureInteractionCallback = void Function(
-    dynamic id, Point<double> point, LatLng coordinates, String layerId);
+    dynamic id, Point<double> point, LatLng coordinates);
 
 typedef OnFeatureDragnCallback = void Function(dynamic id,
     {required Point<double> point,
@@ -93,8 +93,7 @@ class MapLibreMapController extends ChangeNotifier {
     _maplibrePlatform.onFeatureTappedPlatform.add((payload) {
       for (final fun
           in List<OnFeatureInteractionCallback>.from(onFeatureTapped)) {
-        fun(payload["id"], payload["point"], payload["latLng"],
-            payload["layerId"]);
+        fun(payload["id"], payload["point"], payload["latLng"]);
       }
     });
 
