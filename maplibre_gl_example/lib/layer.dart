@@ -142,14 +142,13 @@ class LayerState extends State {
   void _onMapCreated(MapLibreMapController controller) {
     this.controller = controller;
 
-    controller.onFeatureTapped.add(onFeatureTap);
+    // controller.onFeatureTapped.add(onFeatureTap);
   }
 
-  void onFeatureTap(
-      dynamic featureId, Point<double> point, LatLng latLng, String layerId) {
+  void onFeatureTap(dynamic featureId, Point<double> point, LatLng latLng) {
     final snackBar = SnackBar(
       content: Text(
-        'Tapped feature with id $featureId on layer $layerId',
+        'Tapped feature with id $featureId',
         style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
       ),
       backgroundColor: Theme.of(context).primaryColor,

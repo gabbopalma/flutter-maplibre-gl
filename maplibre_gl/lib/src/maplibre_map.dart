@@ -61,6 +61,7 @@ class MapLibreMap extends StatefulWidget {
       AnnotationType.line,
       AnnotationType.circle,
     ],
+    this.foregroundLoadColor = Colors.transparent,
   })  : assert(
           myLocationRenderMode == MyLocationRenderMode.normal ||
               myLocationEnabled,
@@ -72,6 +73,12 @@ class MapLibreMap extends StatefulWidget {
   /// The properties for the platform-specific location engine.
   /// Only has an impact if [myLocationEnabled] is set to true.
   final LocationEnginePlatforms locationEnginePlatforms;
+
+  /// The color used for the map loading foreground.
+  /// Pass a [Color] and it will be converted to ARGB int for the platform.
+  ///
+  /// **Available only on Android. Has no effect on iOS or Web.**
+  final Color? foregroundLoadColor;
 
   /// Defines the layer order of annotations displayed on map
   ///
@@ -351,26 +358,28 @@ class _MapLibreMapState extends State<MapLibreMap> {
 /// When used to change configuration, null values will be interpreted as
 /// "do not change this configuration option".
 class _MapLibreMapOptions {
-  _MapLibreMapOptions(
-      {this.compassEnabled,
-      this.cameraTargetBounds,
-      this.styleString,
-      this.minMaxZoomPreference,
-      required this.rotateGesturesEnabled,
-      required this.scrollGesturesEnabled,
-      required this.tiltGesturesEnabled,
-      required this.zoomGesturesEnabled,
-      required this.doubleClickZoomEnabled,
-      this.trackCameraPosition,
-      this.myLocationEnabled,
-      this.myLocationTrackingMode,
-      this.myLocationRenderMode,
-      this.logoViewMargins,
-      this.compassViewPosition,
-      this.compassViewMargins,
-      this.attributionButtonPosition,
-      this.attributionButtonMargins,
-      this.locationEnginePlatforms});
+  _MapLibreMapOptions({
+    this.compassEnabled,
+    this.cameraTargetBounds,
+    this.styleString,
+    this.minMaxZoomPreference,
+    required this.rotateGesturesEnabled,
+    required this.scrollGesturesEnabled,
+    required this.tiltGesturesEnabled,
+    required this.zoomGesturesEnabled,
+    required this.doubleClickZoomEnabled,
+    this.trackCameraPosition,
+    this.myLocationEnabled,
+    this.myLocationTrackingMode,
+    this.myLocationRenderMode,
+    this.logoViewMargins,
+    this.compassViewPosition,
+    this.compassViewMargins,
+    this.attributionButtonPosition,
+    this.attributionButtonMargins,
+    this.locationEnginePlatforms,
+    this.foregroundLoadColor,
+  });
 
   _MapLibreMapOptions.fromWidget(MapLibreMap map)
       : this(
@@ -394,7 +403,9 @@ class _MapLibreMapOptions {
           compassViewMargins: map.compassViewMargins,
           attributionButtonPosition: map.attributionButtonPosition,
           attributionButtonMargins: map.attributionButtonMargins,
+          foregroundLoadColor: map.foregroundLoadColor,
         );
+  final Color? foregroundLoadColor;
 
   final bool? compassEnabled;
 
@@ -481,6 +492,7 @@ class _MapLibreMapOptions {
     addIfNonNull(
         'attributionButtonMargins', pointToArray(attributionButtonMargins));
     addIfNonNull('locationEngineProperties', locationEnginePlatforms?.toList());
+    addIfNonNull('foregroundLoadColor', foregroundLoadColor?.toARGB32());
     return optionsMap;
   }
 
