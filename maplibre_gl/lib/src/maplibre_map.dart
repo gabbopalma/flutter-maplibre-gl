@@ -59,6 +59,7 @@ class MapLibreMap extends StatefulWidget {
       AnnotationType.line,
       AnnotationType.circle,
     ],
+    this.foregroundLoadColor = Colors.transparent,
   })  : assert(
           myLocationRenderMode == MyLocationRenderMode.normal ||
               myLocationEnabled,
@@ -66,6 +67,12 @@ class MapLibreMap extends StatefulWidget {
         ),
         assert(annotationOrder.length <= 4),
         assert(annotationConsumeTapEvents.length > 0);
+
+  /// The color used for the map loading foreground.
+  /// Pass a [Color] and it will be converted to ARGB int for the platform.
+  ///
+  /// **Available only on Android. Has no effect on iOS or Web.**
+  final Color? foregroundLoadColor;
 
   /// Defines the layer order of annotations displayed on map
   ///
@@ -357,6 +364,7 @@ class _MapLibreMapOptions {
     this.compassViewMargins,
     this.attributionButtonPosition,
     this.attributionButtonMargins,
+    this.foregroundLoadColor,
   });
 
   _MapLibreMapOptions.fromWidget(MapLibreMap map)
@@ -380,7 +388,9 @@ class _MapLibreMapOptions {
           compassViewMargins: map.compassViewMargins,
           attributionButtonPosition: map.attributionButtonPosition,
           attributionButtonMargins: map.attributionButtonMargins,
+          foregroundLoadColor: map.foregroundLoadColor,
         );
+  final Color? foregroundLoadColor;
 
   final bool? compassEnabled;
 
@@ -464,6 +474,7 @@ class _MapLibreMapOptions {
     addIfNonNull('attributionButtonPosition', attributionButtonPosition?.index);
     addIfNonNull(
         'attributionButtonMargins', pointToArray(attributionButtonMargins));
+    addIfNonNull('foregroundLoadColor', foregroundLoadColor?.toARGB32());
     return optionsMap;
   }
 

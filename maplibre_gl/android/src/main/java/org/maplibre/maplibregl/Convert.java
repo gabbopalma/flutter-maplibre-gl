@@ -286,5 +286,9 @@ class Convert {
       final Point point = toPoint(attributionButtonMarginsData, metrics.density);
       sink.setAttributionButtonMargins(point.x, point.y);
     }
+    final Object foregroundLoadColor = data.get("foregroundLoadColor");
+    if (foregroundLoadColor != null) {
+      sink.setForegroundLoadColor(toInt(foregroundLoadColor));
+    }
   }
 }

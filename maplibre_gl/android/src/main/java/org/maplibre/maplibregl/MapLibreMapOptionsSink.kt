@@ -7,6 +7,7 @@ import org.maplibre.android.geometry.LatLngBounds
 
 /** Receiver of MapLibreMap configuration options.  */
 internal interface MapLibreMapOptionsSink {
+    fun setForegroundLoadColor(loadColor: Int)
     // todo: dddd replace with CameraPosition.Builder target
     fun setCameraTargetBounds(bounds: LatLngBounds)
 
