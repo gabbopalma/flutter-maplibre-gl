@@ -214,6 +214,11 @@ class MapLibreMapBuilder implements MapLibreMapOptionsSink {
     options.foregroundLoadColor(loadColor);
   }
 
+  @Override
+  public void setTranslucentTextureSurface(boolean translucentTextureSurface) {
+    options.translucentTextureSurface(translucentTextureSurface);
+  }
+
   public void setDragEnabled(boolean enabled) {
     this.dragEnabled = enabled;
   }

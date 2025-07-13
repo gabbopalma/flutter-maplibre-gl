@@ -15,6 +15,7 @@ import 'package:maplibre_gl_example/given_bounds.dart';
 import 'package:maplibre_gl_example/localized_map.dart';
 import 'package:maplibre_gl_example/no_location_permission_page.dart';
 import 'package:maplibre_gl_example/pmtiles.dart';
+import 'package:maplibre_gl_example/translucent_full_map.dart';
 
 import 'animate_camera.dart';
 import 'annotation_order_maps.dart';
@@ -39,6 +40,7 @@ import 'sources.dart';
 final List<ExamplePage> _allPages = <ExamplePage>[
   const MapUiPage(),
   const FullMapPage(),
+  const TranslucentFullMapPage(),
   const PMTilesPage(),
   const LocalizedMapPage(),
   const AnimateCameraPage(),
@@ -86,7 +88,7 @@ class _MapsDemoState extends State<MapsDemo> {
       }
     }
   }
-
+  
   Future<void> _pushPage(BuildContext context, ExamplePage page) async {
     if (!kIsWeb && page.needsLocationPermission) {
       final location = Location();

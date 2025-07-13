@@ -1144,4 +1144,9 @@ class MapLibreMapController extends MapLibrePlatform
   Future<List> getSourceIds() async {
     throw UnimplementedError();
   }
+
+  @override
+  Future clearAmbientCache() {
+    throw UnimplementedError();
+  }
 }

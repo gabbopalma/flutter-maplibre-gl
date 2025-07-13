@@ -9,6 +9,7 @@ import org.maplibre.android.location.engine.LocationEngineRequest
 /** Receiver of MapLibreMap configuration options.  */
 internal interface MapLibreMapOptionsSink {
     fun setForegroundLoadColor(loadColor: Int)
+    fun setTranslucentTextureSurface(translucentTextureSurface: Boolean)
     // todo: dddd replace with CameraPosition.Builder target
     fun setCameraTargetBounds(bounds: LatLngBounds)
 

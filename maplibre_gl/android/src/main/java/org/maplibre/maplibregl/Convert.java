@@ -309,5 +309,9 @@ static LocationEngineRequest toLocationEngineRequest(Object o) {
     if (foregroundLoadColor != null) {
       sink.setForegroundLoadColor(toInt(foregroundLoadColor));
     }
+    final Object translucentTextureSurface = data.get("translucentTextureSurface");
+    if (translucentTextureSurface != null) {
+      sink.setTranslucentTextureSurface(toBoolean(translucentTextureSurface));
+    }
   }
 }

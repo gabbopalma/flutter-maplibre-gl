@@ -62,6 +62,7 @@ class MapLibreMap extends StatefulWidget {
       AnnotationType.circle,
     ],
     this.foregroundLoadColor = Colors.transparent,
+    this.translucentTextureSurface = false,
   })  : assert(
           myLocationRenderMode == MyLocationRenderMode.normal ||
               myLocationEnabled,
@@ -79,6 +80,12 @@ class MapLibreMap extends StatefulWidget {
   ///
   /// **Available only on Android. Has no effect on iOS or Web.**
   final Color? foregroundLoadColor;
+
+  /// Enable translucent texture surface for the map.
+  /// This allows the map to have a transparent background, useful for overlay scenarios.
+  ///
+  /// **Available only on Android. Has no effect on iOS or Web.**
+  final bool translucentTextureSurface;
 
   /// Defines the layer order of annotations displayed on map
   ///
@@ -379,6 +386,7 @@ class _MapLibreMapOptions {
     this.attributionButtonMargins,
     this.locationEnginePlatforms,
     this.foregroundLoadColor,
+    this.translucentTextureSurface,
   });
 
   _MapLibreMapOptions.fromWidget(MapLibreMap map)
@@ -404,7 +412,9 @@ class _MapLibreMapOptions {
           attributionButtonPosition: map.attributionButtonPosition,
           attributionButtonMargins: map.attributionButtonMargins,
           foregroundLoadColor: map.foregroundLoadColor,
+          translucentTextureSurface: map.translucentTextureSurface,
         );
+  
   final Color? foregroundLoadColor;
 
   final bool? compassEnabled;
@@ -444,6 +454,8 @@ class _MapLibreMapOptions {
   final Point? attributionButtonMargins;
 
   final LocationEnginePlatforms? locationEnginePlatforms;
+
+  final bool? translucentTextureSurface;
 
   final _gestureGroup = {
     'rotateGesturesEnabled',
@@ -493,6 +505,7 @@ class _MapLibreMapOptions {
         'attributionButtonMargins', pointToArray(attributionButtonMargins));
     addIfNonNull('locationEngineProperties', locationEnginePlatforms?.toList());
     addIfNonNull('foregroundLoadColor', foregroundLoadColor?.toARGB32());
+    addIfNonNull('translucentTextureSurface', translucentTextureSurface);
     return optionsMap;
   }
 
