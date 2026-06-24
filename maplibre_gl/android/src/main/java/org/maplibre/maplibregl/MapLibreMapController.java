@@ -1646,15 +1646,10 @@ final class MapLibreMapController
                 null);
             break;
           }
-          BitmapFactory.Options options = new BitmapFactory.Options();
-          options.inScaled = false;
-          options.inDensity = 0;
-          options.inTargetDensity = 0;
           Bitmap bitmap = BitmapFactory.decodeByteArray(
               call.argument("bytes"),
               0,
-              call.argument("length"),
-              options);
+              call.argument("length"));
           if (bitmap == null) {
             result.error("INVALID_IMAGE", "Failed to decode image bytes.", null);
             break;
