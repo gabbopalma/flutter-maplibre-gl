@@ -356,6 +356,13 @@ class FakeMapLibrePlatform extends MapLibrePlatform {
   }
 
   @override
+  Future<void> moveLayer(String layerId, {String? belowLayerId}) async {
+    calls.add(
+      PlatformCall('moveLayer', [layerId], {'belowLayerId': belowLayerId}),
+    );
+  }
+
+  @override
   Future<List> getLayerIds() async => [];
 
   @override

@@ -1,3 +1,7 @@
+## [0.28.0]
+### Added
+* `moveLayer(layerId, {belowLayerId})` moves an existing layer to a new position in the layer stack. It is implemented as a single, atomic operation on the native side (Android/iOS/web): the existing layer is removed and re-inserted at its new position without being recreated, so paint/layout/filter properties and the source binding are preserved and there is no visible flicker.
+
 ## [0.27.1](https://github.com/maplibre/flutter-maplibre-gl/compare/v0.27.0...v0.27.1)
 
 ### Fixed
