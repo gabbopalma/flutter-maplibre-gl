@@ -5,13 +5,12 @@ import 'package:permission_handler/permission_handler.dart';
 
 // PMTiles protocol registration is JS interop, so it only exists on web; the
 // native stub keeps the example compiling for Android and iOS.
-import 'pmtiles_protocol_native.dart'
-    if (dart.library.js_interop) 'pmtiles_protocol_web.dart'
-    as pmtiles_protocol;
+import 'pmtiles_protocol_native.dart' if (dart.library.js_interop) 'pmtiles_protocol_web.dart' as pmtiles_protocol;
 
 // Page system
 import 'page.dart';
 import 'shared/constants.dart';
+import 'shared/tile_client_identity.dart';
 
 // Basics examples
 import 'examples/basics/full_map_example.dart';
@@ -39,6 +38,7 @@ import 'examples/annotations/edit_annotation_animated.dart';
 import 'examples/annotations/edit_annotation_draggable.dart';
 
 // Layers examples
+import 'examples/layers/background_layer_example.dart';
 import 'examples/layers/circle_layer_example.dart';
 import 'examples/layers/cluster_properties_example.dart';
 import 'examples/layers/feature_state_example.dart';
@@ -55,6 +55,7 @@ import 'examples/advanced/translucent_full_map.dart';
 import 'examples/advanced/map_snapshot.dart';
 import 'examples/advanced/map_language.dart';
 import 'examples/advanced/large_geojson_stress.dart';
+import 'examples/advanced/globe_terrain_sky.dart';
 
 // Doc-only examples (not shown in app home, only reachable via ?example=slug)
 import 'examples/docs/doc_full_map.dart';
@@ -69,6 +70,7 @@ import 'examples/docs/doc_geojson_source.dart';
 import 'examples/docs/doc_pmtiles.dart';
 import 'examples/docs/doc_heatmap.dart';
 import 'examples/docs/doc_expressions.dart';
+import 'examples/docs/doc_globe.dart';
 
 String? _initialExampleSlug() {
   if (!kIsWeb) return null;
@@ -100,11 +102,16 @@ Future<void> main() async {
           : "debug"} mode',
     );
   } else {
-    // demotiles.maplibre.org rate-limits aggressively (HTTP 429); pick a
-    // reachable default style before the gallery builds any map.
     WidgetsFlutterBinding.ensureInitialized();
-    await ExampleConstants.resolveDemoMapStyle();
   }
+
+  // Tell tile servers who is asking before the first request goes out
+  // (no-op on web, where the browser owns the User-Agent).
+  await configureTileClientIdentity();
+  // demotiles.maplibre.org rate-limits aggressively (HTTP 429); pick a
+  // reachable default style before the gallery builds any map, on every
+  // platform.
+  await ExampleConstants.resolveDemoMapStyle();
 
   runApp(const MapLibreExampleApp());
 }
@@ -154,13 +161,14 @@ final List<ExamplePage> _allPages = <ExamplePage>[
   // Camera
   const CameraControlsExample(),
   const CameraBoundsExample(),
+  const GlobeTerrainSkyPage(),
 
   // Interaction
   const MapControlsExample(),
   const MapGesturesExample(),
   // Hover Effect follows the mouse, which only exists on web. The
   // cross-platform side of feature state is the Feature State page below.
-  if (kIsWeb) const HoverEffectExample(),
+  if (HoverEffectExample.isSupported) const HoverEffectExample(),
 
   // Annotations
   const AnnotationsExample(),
@@ -176,6 +184,7 @@ final List<ExamplePage> _allPages = <ExamplePage>[
   const ClusterPropertiesExample(),
   const FillLayerExample(),
   const LineLayerExample(),
+  const BackgroundLayerExample(),
   // Feature state is available on web and Android, not on iOS yet.
   if (FeatureStateExample.isSupported) const FeatureStateExample(),
   const EditStyleLayerAnimatedExample(),
@@ -206,6 +215,7 @@ final List<ExamplePage> _docPages = [
   const DocPMTilesExample(),
   const DocHeatmapExample(),
   const DocExpressionsExample(),
+  const DocGlobeExample(),
 ];
 
 class MapsDemo extends StatefulWidget {
@@ -217,14 +227,12 @@ class MapsDemo extends StatefulWidget {
 
 class _MapsDemoState extends State<MapsDemo> {
   Future<void> _pushPage(BuildContext context, ExamplePage page) async {
-    if (!kIsWeb) {
-      // Re-check right before the map loads: demotiles' limiter answers per
-      // request, so the startup probe can pass and the page's style request
-      // still get a 429 minutes later. A recent success skips the probe.
-      await ExampleConstants.resolveDemoMapStyle(
-        maxAge: const Duration(seconds: 30),
-      );
-    }
+    // Re-check right before the map loads: demotiles' limiter answers per
+    // request, so the startup probe can pass and the page's style request
+    // still get a 429 minutes later. A recent success skips the probe.
+    await ExampleConstants.resolveDemoMapStyle(
+      maxAge: const Duration(seconds: 30),
+    );
     if (!kIsWeb && page.needsLocationPermission) {
       final status = await Permission.locationWhenInUse.status;
       if (!status.isGranted) {

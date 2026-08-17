@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math' as math;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:maplibre_gl/maplibre_gl.dart';
 import '../../page.dart';
@@ -24,6 +25,9 @@ import '../../shared/shared.dart';
 ///
 /// Based on: https://maplibre.org/maplibre-gl-js/docs/examples/create-a-hover-effect/
 class HoverEffectExample extends ExamplePage {
+  /// Hover Effect is only supported on Web because needs mouse interaction.
+  static bool get isSupported => kIsWeb;
+
   const HoverEffectExample({super.key})
     : super(
         const Icon(Icons.touch_app),
@@ -70,8 +74,7 @@ class _HoverEffectBodyState extends State<_HoverEffectBody> {
     await _controller!.addSource(
       _sourceName,
       const GeojsonSourceProperties(
-        data:
-            'https://maplibre.org/maplibre-gl-js/docs/assets/us_states.geojson',
+        data: 'https://maplibre.org/maplibre-gl-js/docs/assets/us_states.geojson',
         promoteId: 'STATE_ID',
       ),
     );
@@ -216,10 +219,7 @@ class _HoverEffectBodyState extends State<_HoverEffectBody> {
                           'Hovering:',
                           style: TextStyle(
                             fontSize: 12,
-                            color: Theme.of(context)
-                                .colorScheme
-                                .onPrimaryContainer
-                                .withValues(alpha: 0.7),
+                            color: Theme.of(context).colorScheme.onPrimaryContainer.withValues(alpha: 0.7),
                           ),
                         ),
                         const SizedBox(height: 4),

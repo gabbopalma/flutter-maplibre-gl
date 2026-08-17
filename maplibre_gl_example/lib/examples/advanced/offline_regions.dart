@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:collection/collection.dart' show IterableExtension;
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:maplibre_gl/maplibre_gl.dart';
 import 'package:path_provider/path_provider.dart';
@@ -80,10 +81,7 @@ class OfflineRegionListItem {
     offlineRegionDefinition: offlineRegionDefinition,
     name: name,
     estimatedTiles: estimatedTiles,
-    downloadedId:
-        identical(downloadedId, _sentinel)
-            ? this.downloadedId
-            : downloadedId as int?,
+    downloadedId: identical(downloadedId, _sentinel) ? this.downloadedId : downloadedId as int?,
     isDownloading: isDownloading ?? this.isDownloading,
     isPaused: isPaused ?? this.isPaused,
     downloadProgress: downloadProgress ?? this.downloadProgress,
@@ -120,6 +118,10 @@ final List<OfflineRegionListItem> allRegions = [
 ];
 
 class OfflineRegionsPage extends ExamplePage {
+  /// Offline Regions example is available only on iOS and Android.
+  /// On Web, the Offline Regions are currently not supported.
+  static bool get isSupported => [TargetPlatform.android, TargetPlatform.iOS].contains(defaultTargetPlatform);
+
   const OfflineRegionsPage({super.key})
     : super(
         const Icon(Icons.cloud_off),
@@ -245,8 +247,7 @@ class _OfflineRegionsBodyState extends State<_OfflineRegionBody> {
                     Text(
                       'Tap for a step-by-step guide.',
                       style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onSecondaryContainer
-                            .withValues(alpha: 0.8),
+                        color: theme.colorScheme.onSecondaryContainer.withValues(alpha: 0.8),
                       ),
                     ),
                   ],
@@ -380,18 +381,12 @@ class _OfflineRegionsBodyState extends State<_OfflineRegionBody> {
               width: 48,
               height: 48,
               decoration: BoxDecoration(
-                color:
-                    item.isDownloaded
-                        ? theme.colorScheme.primaryContainer
-                        : theme.colorScheme.surfaceContainerHighest,
+                color: item.isDownloaded ? theme.colorScheme.primaryContainer : theme.colorScheme.surfaceContainerHighest,
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Icon(
                 item.isDownloaded ? Icons.cloud_done : Icons.cloud_download,
-                color:
-                    item.isDownloaded
-                        ? theme.colorScheme.onPrimaryContainer
-                        : theme.colorScheme.onSurfaceVariant,
+                color: item.isDownloaded ? theme.colorScheme.onPrimaryContainer : theme.colorScheme.onSurfaceVariant,
               ),
             ),
             title: Text(
@@ -415,19 +410,13 @@ class _OfflineRegionsBodyState extends State<_OfflineRegionBody> {
                       icon: Icon(
                         item.isPaused ? Icons.play_arrow : Icons.pause,
                       ),
-                      onPressed:
-                          item.downloadedId != null
-                              ? () => _togglePause(item, index)
-                              : null,
+                      onPressed: item.downloadedId != null ? () => _togglePause(item, index) : null,
                     )
                     : null,
           ),
           if (item.isDownloading)
             LinearProgressIndicator(
-              value:
-                  item.downloadProgress > 0
-                      ? item.downloadProgress / 100.0
-                      : null,
+              value: item.downloadProgress > 0 ? item.downloadProgress / 100.0 : null,
             ),
           Padding(
             padding: const EdgeInsets.all(12),
@@ -448,19 +437,13 @@ class _OfflineRegionsBodyState extends State<_OfflineRegionBody> {
                           ? ExampleButton(
                             label: 'Delete',
                             icon: Icons.delete_outline,
-                            onPressed:
-                                item.isDownloading
-                                    ? null
-                                    : () => _deleteRegion(item, index),
+                            onPressed: item.isDownloading ? null : () => _deleteRegion(item, index),
                             style: ExampleButtonStyle.destructive,
                           )
                           : ExampleButton(
                             label: 'Download',
                             icon: Icons.download,
-                            onPressed:
-                                item.isDownloading
-                                    ? null
-                                    : () => _downloadRegion(item, index),
+                            onPressed: item.isDownloading ? null : () => _downloadRegion(item, index),
                             style: ExampleButtonStyle.filled,
                           ),
                 ),
