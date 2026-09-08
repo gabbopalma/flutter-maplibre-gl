@@ -3,16 +3,19 @@ import 'package:maplibre_gl/maplibre_gl.dart';
 
 void main() {
   group('CircleLayerProperties', () {
-    test('toJson with skipNulls omits null fields', () {
+    test('toJson omits omitted (untouched) fields', () {
       const props = CircleLayerProperties(circleRadius: 10);
       final json = props.toJson();
       expect(json['circle-radius'], 10);
       expect(json.containsKey('circle-color'), isFalse);
     });
 
-    test('toJson without skipNulls includes null fields', () {
-      const props = CircleLayerProperties(circleRadius: 10);
-      final json = props.toJson(skipNulls: false);
+    test('toJson sends explicit null for resetToDefault fields', () {
+      const props = CircleLayerProperties(
+        circleRadius: 10,
+        circleColor: resetToDefault,
+      );
+      final json = props.toJson();
       expect(json['circle-radius'], 10);
       expect(json.containsKey('circle-color'), isTrue);
       expect(json['circle-color'], isNull);
@@ -44,7 +47,7 @@ void main() {
   });
 
   group('LineLayerProperties', () {
-    test('toJson with skipNulls', () {
+    test('toJson omits omitted fields', () {
       const props = LineLayerProperties(lineColor: '#0000FF', lineWidth: 3);
       final json = props.toJson();
       expect(json['line-color'], '#0000FF');
@@ -52,10 +55,14 @@ void main() {
       expect(json.containsKey('line-opacity'), isFalse);
     });
 
-    test('toJson without skipNulls', () {
-      const props = LineLayerProperties(lineColor: '#0000FF');
-      final json = props.toJson(skipNulls: false);
+    test('toJson sends explicit null for resetToDefault fields', () {
+      const props = LineLayerProperties(
+        lineColor: '#0000FF',
+        lineOpacity: resetToDefault,
+      );
+      final json = props.toJson();
       expect(json.containsKey('line-opacity'), isTrue);
+      expect(json['line-opacity'], isNull);
     });
 
     test('fromJson roundtrip', () {
@@ -72,7 +79,7 @@ void main() {
   });
 
   group('FillLayerProperties', () {
-    test('toJson with skipNulls', () {
+    test('toJson omits omitted fields', () {
       const props = FillLayerProperties(fillColor: '#00FF00', fillOpacity: 0.5);
       final json = props.toJson();
       expect(json['fill-color'], '#00FF00');
@@ -115,7 +122,7 @@ void main() {
   });
 
   group('SymbolLayerProperties', () {
-    test('toJson with skipNulls', () {
+    test('toJson omits omitted fields', () {
       const props = SymbolLayerProperties(
         iconImage: 'marker',
         iconSize: 1.5,
@@ -177,7 +184,7 @@ void main() {
   });
 
   group('FillExtrusionLayerProperties', () {
-    test('toJson with skipNulls', () {
+    test('toJson omits omitted fields', () {
       const props = FillExtrusionLayerProperties(
         fillExtrusionColor: '#333333',
         fillExtrusionHeight: 100,
@@ -220,7 +227,7 @@ void main() {
   });
 
   group('RasterLayerProperties', () {
-    test('toJson with skipNulls', () {
+    test('toJson omits omitted fields', () {
       const props = RasterLayerProperties(
         rasterOpacity: 0.8,
         rasterBrightnessMax: 1.0,
@@ -260,7 +267,7 @@ void main() {
   });
 
   group('HillshadeLayerProperties', () {
-    test('toJson with skipNulls', () {
+    test('toJson omits omitted fields', () {
       const props = HillshadeLayerProperties(
         hillshadeExaggeration: 0.5,
         hillshadeIlluminationDirection: 335,
@@ -301,7 +308,7 @@ void main() {
   });
 
   group('HeatmapLayerProperties', () {
-    test('toJson with skipNulls', () {
+    test('toJson omits omitted fields', () {
       const props = HeatmapLayerProperties(
         heatmapRadius: 30,
         heatmapIntensity: 0.5,
@@ -444,6 +451,50 @@ void main() {
         final json = layer.toJson();
         expect(json.containsKey('visibility'), isTrue);
       }
+    });
+  });
+
+  group('resetToDefault sentinel', () {
+    test('omitted fields are left untouched (not present in json)', () {
+      const props = SymbolLayerProperties(iconOpacity: 0.5);
+      final json = props.toJson();
+      expect(json, {'icon-opacity': 0.5});
+      expect(json.containsKey('text-field'), isFalse);
+      expect(json.containsKey('icon-image'), isFalse);
+    });
+
+    test(
+      'resetToDefault fields are serialized as explicit null, other omitted fields are not sent',
+      () {
+        const props = SymbolLayerProperties(
+          iconOpacity: 0.5,
+          textField: resetToDefault,
+        );
+        final json = props.toJson();
+        expect(json['icon-opacity'], 0.5);
+        expect(json.containsKey('text-field'), isTrue);
+        expect(json['text-field'], isNull);
+        // icon-image was never touched, so it must not be present at all,
+        // proving it won't be reset on the platform side.
+        expect(json.containsKey('icon-image'), isFalse);
+      },
+    );
+
+    test('copyWith forwards an explicit resetToDefault from changes', () {
+      const original = SymbolLayerProperties(
+        iconOpacity: 0.5,
+        textField: 'Hello',
+      );
+      final updated = original.copyWith(
+        const SymbolLayerProperties(textField: resetToDefault),
+      );
+      expect(updated.iconOpacity, 0.5);
+      expect(identical(updated.textField, resetToDefault), isTrue);
+      expect(updated.toJson()['text-field'], isNull);
+    });
+
+    test('resetToDefault stringifies for debugging', () {
+      expect(resetToDefault.toString(), 'resetToDefault');
     });
   });
 }

@@ -1,3 +1,12 @@
+## [Unreleased]
+
+### Fixed
+* `setLayerProperties()` no longer resets every property of a layer that wasn't explicitly set. Previously, `properties.toJson()` serialized *every* field of a `*LayerProperties` subclass, including untouched ones, sending them as explicit JSON `null` — which the native side (Android, iOS, web) interpreted as "reset this style property to its spec default". This meant e.g. toggling only `iconOpacity`/`textOpacity` on a `SymbolLayerProperties` would silently wipe out `iconImage`/`textField` and every other property on the layer.
+
+### Changed
+* **Breaking (internal serialization only):** A property left unset (`null`) on a `*LayerProperties` constructor is now treated as "leave this property untouched" and is no longer sent to the platform side. To explicitly reset a property back to its style-spec default, pass the new `resetToDefault` sentinel as that property's value instead of leaving it unset, e.g. `SymbolLayerProperties(textField: resetToDefault)`.
+
+
 ## [0.27.1](https://github.com/maplibre/flutter-maplibre-gl/compare/v0.27.0...v0.27.1)
 
 ### Fixed

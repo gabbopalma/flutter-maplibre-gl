@@ -711,14 +711,17 @@ class MapLibreMapController extends ChangeNotifier {
   /// The returned [Future] completes after the change has been made on the
   /// platform side.
   ///
-  /// NOTE: The [properties] will not skip null values, so setting a property to null will potentially reset it to default.
+  /// NOTE: Any property left unset (`null`) on [properties] is left
+  /// untouched on the native layer — it will NOT be reset. To explicitly
+  /// reset a property back to its style-spec default, pass [resetToDefault]
+  /// as that property's value instead of leaving it unset.
   Future<void> setLayerProperties(
     String layerId,
     LayerProperties properties,
   ) async {
     await _maplibrePlatform.setLayerProperties(
       layerId,
-      properties.toJson(skipNulls: false),
+      properties.toJson(),
     );
   }
 
