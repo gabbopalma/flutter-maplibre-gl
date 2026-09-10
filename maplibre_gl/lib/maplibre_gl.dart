@@ -115,6 +115,8 @@ part 'src/layer_expressions.dart';
 
 part 'src/layer_properties.dart';
 
+part 'src/reset_to_default.dart';
+
 part 'src/color_tools.dart';
 
 part 'src/annotation_manager.dart';
